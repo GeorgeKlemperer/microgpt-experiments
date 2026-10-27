@@ -1,0 +1,16 @@
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Downloaded training data
+input.txt
+
+# Generated experiment outputs
+outputs/
+checkpoints/
+
+# Editor / OS
+.DS_Store
+.vscode/
