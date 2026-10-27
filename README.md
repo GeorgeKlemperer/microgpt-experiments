@@ -1,12 +1,19 @@
 # microgpt-experiments
 
+This project uses the existing Pipenv environment in the parent directory; no
+local virtual environment or additional dependencies are needed.
+
 Run the program with:
 
 ```bash
 pipenv run python microgpt.py
 ```
 
-After training, the learning curve is saved as `learning_curve.svg`.
+After the 20 generated samples, a table shows the average training loss for each
+100-step block (including any shorter final block). The loss history is also saved
+to `learning_curve.csv`, and its plot is saved as `learning_curve.svg` in the
+project directory. These generated files are overwritten on each run and ignored
+by Git.
 
 Setup:
 

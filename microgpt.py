@@ -6,9 +6,10 @@ Everything else is just efficiency.
 @karpathy
 """
 
-import os       # os.path.exists
-import math     # math.log, math.exp
-import random   # random.seed, random.choices, random.gauss, random.shuffle
+import csv       # csv.writer
+import os        # os.path.exists
+import math      # math.log, math.exp
+import random    # random.seed, random.choices, random.gauss, random.shuffle
 random.seed(42) # Let there be order among chaos
 
 # Let there be a Dataset `docs`: list[str] of documents (e.g. a list of names)
@@ -150,6 +151,7 @@ v = [0.0] * len(params) # second moment buffer
 
 # Repeat in sequence
 num_steps = 1000 # number of training steps
+loss_history = []
 for step in range(num_steps):
 
     # Take single document, tokenize it, surround it with BOS special token on both sides
@@ -167,6 +169,7 @@ for step in range(num_steps):
         loss_t = -probs[target_id].log()
         losses.append(loss_t)
     loss = (1 / n) * sum(losses) # final average loss over the document sequence. May yours be low.
+    loss_history.append(loss.data)
 
     # Backward the loss, calculating the gradients with respect to all model parameters
     loss.backward()
@@ -198,3 +201,46 @@ for sample_idx in range(20):
             break
         sample.append(uchars[token_id])
     print(f"sample {sample_idx+1:2d}: {''.join(sample)}")
+
+print("\n--- training loss summary ---")
+print(f"{'Training steps':<16} {'Average loss':>12}")
+for start in range(0, len(loss_history), 100):
+    window = loss_history[start:start + 100]
+    step_range = f"{start + 1}-{start + len(window)}"
+    print(f"{step_range:<16} {sum(window) / len(window):>12.3f}")
+
+# Save the training history as CSV for further analysis.
+with open('learning_curve.csv', 'w', newline='', encoding='utf-8') as csv_file:
+    writer = csv.writer(csv_file)
+    writer.writerow(['step', 'loss'])
+    writer.writerows(enumerate(loss_history, start=1))
+
+# Draw a lightweight SVG plot without adding a plotting dependency.
+plot_width, plot_height = 800, 500
+left, right, top, bottom = 80, 30, 30, 60
+plot_width_inner = plot_width - left - right
+plot_height_inner = plot_height - top - bottom
+min_loss, max_loss = min(loss_history), max(loss_history)
+loss_range = max_loss - min_loss or 1
+points = ' '.join(
+    f'{left + i * plot_width_inner / max(1, len(loss_history) - 1):.2f},'
+    f'{top + (max_loss - loss) * plot_height_inner / loss_range:.2f}'
+    for i, loss in enumerate(loss_history)
+)
+with open('learning_curve.svg', 'w', encoding='utf-8') as plot_file:
+    plot_file.write(
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{plot_width}" height="{plot_height}" '
+        f'viewBox="0 0 {plot_width} {plot_height}">\n'
+        '<rect width="100%" height="100%" fill="white"/>\n'
+        f'<path d="M {left} {top} V {plot_height - bottom} H {plot_width - right}" '
+        'fill="none" stroke="black"/>\n'
+        f'<polyline points="{points}" fill="none" stroke="#2463a6" stroke-width="1.5"/>\n'
+        f'<text x="{plot_width / 2}" y="{plot_height - 15}" text-anchor="middle">Training step</text>\n'
+        f'<text x="20" y="{plot_height / 2}" text-anchor="middle" '
+        f'transform="rotate(-90 20 {plot_height / 2})">Loss</text>\n'
+        f'<text x="{left - 10}" y="{top + 5}" text-anchor="end">{max_loss:.3f}</text>\n'
+        f'<text x="{left - 10}" y="{plot_height - bottom + 5}" text-anchor="end">{min_loss:.3f}</text>\n'
+        '</svg>\n'
+    )
+
+print('\nLearning curve saved to learning_curve.csv and learning_curve.svg.')

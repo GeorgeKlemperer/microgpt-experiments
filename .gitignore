@@ -1,15 +1,13 @@
-
 # Python
 __pycache__/
 *.pyc
-.venv/
 
 # Downloaded training data
 input.txt
 
 # Generated experiment outputs
-outputs/
-checkpoints/
+learning_curve.csv
+learning_curve.svg
 
 # Editor / OS
 .DS_Store
