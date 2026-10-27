@@ -12,12 +12,17 @@ import math      # math.log, math.exp
 import random    # random.seed, random.choices, random.gauss, random.shuffle
 random.seed(42) # Let there be order among chaos
 
+input_file = 'flowers.txt'
+
 # Let there be a Dataset `docs`: list[str] of documents (e.g. a list of names)
-if not os.path.exists('input.txt'):
+if input_file == 'input.txt' and not os.path.exists(input_file):
     import urllib.request
     names_url = 'https://raw.githubusercontent.com/karpathy/makemore/988aa59/names.txt'
-    urllib.request.urlretrieve(names_url, 'input.txt')
-docs = [line.strip() for line in open('input.txt') if line.strip()]
+    urllib.request.urlretrieve(names_url, input_file)
+with open(input_file, encoding='utf-8') as dataset:
+    docs = [line.strip() for line in dataset if line.strip()]
+if not docs:
+    raise ValueError(f"Dataset {input_file!r} must contain at least one non-empty line.")
 random.shuffle(docs)
 print(f"num docs: {len(docs)}")
 
