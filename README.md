@@ -28,9 +28,9 @@ To try a smaller corpus, set:
 input_file = 'flowers.txt'
 ```
 
-The included `flowers.txt` contains 189 lowercase flower names, all short enough
+The included `flowers.txt` contains 285 lowercase flower names, all short enough
 for the model's 16-token context. With 1,000 training steps, these examples repeat
-about 5 times, whereas the default corpus supplies a different name at each step.
+about 3.5 times, whereas the default corpus supplies a different name at each step.
 A lower training loss may therefore reflect memorization; changing the vocabulary
 and subject matter also means this is not a controlled test of corpus size alone.
 
