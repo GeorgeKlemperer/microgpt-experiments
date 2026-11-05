@@ -1,5 +1,7 @@
 # microgpt-experiments
 
+https://karpathy.github.io/2026/02/12/microgpt/
+
 This project uses the existing Pipenv environment in the parent directory; no
 local virtual environment or additional dependencies are needed.
 
